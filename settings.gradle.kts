@@ -1,4 +1,4 @@
-rootProject.name = "enchantstats"
+rootProject.name = "enchantmentstats"
 
 pluginManagement {
     repositories {

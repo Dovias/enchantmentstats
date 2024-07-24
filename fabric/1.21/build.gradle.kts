@@ -6,8 +6,12 @@ plugins {
     id("io.github.goooler.shadow")
 }
 
-group = "me.dovias.enchantips"
-version = "1.0.0"
+group = project.parent!!.group
+version = project.parent!!.version
+
+base {
+    archivesName.set("${rootProject.name}-${project.parent?.name}-${project.version}+${project.name}")
+}
 
 java {
     targetCompatibility = JavaVersion.VERSION_21
@@ -27,11 +31,24 @@ dependencies {
     shadow(project(":fabric", "shadow"))
 }
 
-base {
-    archivesName.set("${rootProject.name}-${project.parent?.name}-${project.version}+${project.name}")
-}
-
 tasks {
+    processResources {
+        filesMatching("fabric.mod.json") {
+            expand(
+                "mod_id" to rootProject.name,
+                "mod_group" to project.group,
+                "mod_name" to rootProject.properties["mod_name"],
+                "mod_version" to project.version,
+                "mod_description" to rootProject.properties["mod_description"],
+                "mod_homepage" to rootProject.properties["mod_homepage"],
+                "mod_issues" to rootProject.properties["mod_issues"],
+                "mod_sources" to rootProject.properties["mod_sources"],
+                "mod_license" to rootProject.properties["mod_license"],
+                "mod_icon" to rootProject.properties["mod_icon"],
+            )
+        }
+    }
+
     build {
         dependsOn("remapShadowJar")
     }

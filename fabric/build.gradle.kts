@@ -4,8 +4,8 @@ plugins {
     id("fabric-loom") version "1.7-SNAPSHOT" apply false
 }
 
-group = rootProject.properties["group"]!!
-version = rootProject.properties["version"]!!
+group = "${project.parent!!.group}.fabric"
+version = project.parent!!.version
 
 java {
     targetCompatibility = JavaVersion.VERSION_21
