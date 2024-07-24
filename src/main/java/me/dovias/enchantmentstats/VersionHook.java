@@ -1,5 +1,5 @@
 package me.dovias.enchantmentstats;
 
-public interface VersionAdapter {
+public interface VersionHook {
     String getVersion();
 }

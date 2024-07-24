@@ -1,9 +1,9 @@
-package me.dovias.enchantmentstats.fabric.adapter;
+package me.dovias.enchantmentstats.fabric.hook;
 
-import me.dovias.enchantmentstats.VersionAdapter;
+import me.dovias.enchantmentstats.VersionHook;
 import net.minecraft.client.MinecraftClient;
 
-public class FabricVersionAdapter implements VersionAdapter {
+public class FabricVersionHook implements VersionHook {
     @Override
     public String getVersion() {
         return MinecraftClient.getInstance().getGameVersion();
