@@ -26,6 +26,7 @@ dependencies {
     minecraft("com.mojang:minecraft:${project.properties["minecraft_version"]}")
     mappings("net.fabricmc:yarn:${project.properties["yarn_mappings"]}:v2")
 
+    modImplementation("net.fabricmc:fabric-loader:${project.parent!!.properties["loader_version"]}")
     modImplementation("net.fabricmc.fabric-api:fabric-api:${project.properties["fabric_version"]}")
 
     shadow(project(":fabric", "shadow"))
@@ -35,8 +36,6 @@ tasks {
     processResources {
         filesMatching("fabric.mod.json") {
             expand(
-                "mod_id" to rootProject.name,
-                "mod_group" to project.group,
                 "mod_name" to rootProject.properties["mod_name"],
                 "mod_version" to project.version,
                 "mod_description" to rootProject.properties["mod_description"],

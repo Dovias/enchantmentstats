@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "me.dovias.${project.name}"
-version = "0.0.1"
+version = "0.0.2"
 
 java {
     targetCompatibility = JavaVersion.VERSION_21

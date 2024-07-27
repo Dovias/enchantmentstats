@@ -1,51 +1,57 @@
 package me.dovias.enchantmentstats.fabric.hook;
 
-import me.dovias.enchantmentstats.Enchantment;
-import me.dovias.enchantmentstats.ItemType;
-import me.dovias.enchantmentstats.Registry;
+import me.dovias.enchantmentstats.enchantment.Enchantment;
+import me.dovias.enchantmentstats.item.Item;
+import me.dovias.enchantmentstats.manager.IdentifiableConfigurableObjectManager;
+
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
+
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.registry.RegistryKeys;
 
 public class RegistrySyncListener implements ClientPlayConnectionEvents.Join {
-    private final Registry<String, Enchantment> enchantments;
-    private final Registry<String, ItemType> itemTypes;
+    private final IdentifiableConfigurableObjectManager<Enchantment.Type.Customizer, Enchantment.Type, String> enchantmentTypeManager;
+    private final IdentifiableConfigurableObjectManager<Item.Type.Customizer, Item.Type, String> itemTypeManager;
 
-    public RegistrySyncListener(Registry<String, Enchantment> enchantments, Registry<String, ItemType> itemTypes) {
-        this.enchantments = enchantments;
-        this.itemTypes = itemTypes;
+    public RegistrySyncListener(IdentifiableConfigurableObjectManager<Enchantment.Type.Customizer, Enchantment.Type, String> enchantmentTypeManager,
+                                IdentifiableConfigurableObjectManager<Item.Type.Customizer, Item.Type, String> itemTypeManager) {
+
+        this.enchantmentTypeManager = enchantmentTypeManager;
+        this.itemTypeManager = itemTypeManager;
     }
 
     @Override
     public void onPlayReady(ClientPlayNetworkHandler handler, PacketSender sender, MinecraftClient client) {
-        this.enchantments.clear();
-        handler.getRegistryManager().get(RegistryKeys.ENCHANTMENT).getEntrySet().forEach((entry) -> {
+        this.enchantmentTypeManager.clear();
+        handler.getRegistryManager().get(RegistryKeys.ENCHANTMENT).getEntrySet().forEach(entry -> {
             net.minecraft.enchantment.Enchantment enchantment = entry.getValue();
             net.minecraft.enchantment.Enchantment.Definition definition = enchantment.definition();
 
-            this.enchantments.register(Enchantment.builder()
-                .identifier(entry.getKey().getValue().toString())
-                .minLevel(enchantment.getMinLevel())
-                .maxLevel(enchantment.getMaxLevel())
-                .minCost(Enchantment.Cost.builder()
-                    .base(definition.minCost().base())
-                    .level(definition.maxCost().perLevelAboveFirst())
+            this.enchantmentTypeManager.register(enchantmentType -> enchantmentType
+                .setIdentifier(entry.getKey().getValue().toString())
+                .setMinLevel(enchantment.getMinLevel())
+                .setMaxLevel(enchantment.getMaxLevel())
+                .setMinCost(cost -> cost
+                    .setBaseCost(definition.minCost().base())
+                    .setPerLevelCost(definition.minCost().perLevelAboveFirst())
                 )
-                .maxCost(Enchantment.Cost.builder()
-                    .base(definition.minCost().base())
-                    .level(definition.maxCost().perLevelAboveFirst())
+                .setMaxCost(cost -> cost
+                    .setBaseCost(definition.maxCost().base())
+                    .setPerLevelCost(definition.maxCost().perLevelAboveFirst())
                 )
-                .weight(entry.getValue().getWeight())
+                .setWeight(enchantment.getWeight())
             );
         });
 
-        this.itemTypes.clear();
-        handler.getRegistryManager().get(RegistryKeys.ITEM).getEntrySet().forEach((entry) -> this.itemTypes.register(ItemType.builder()
-            .identifier(entry.getKey().getValue().toString())
-            .enchantability(entry.getValue().getEnchantability())
-        ));
+        this.enchantmentTypeManager.clear();
+        handler.getRegistryManager().get(RegistryKeys.ITEM).getEntrySet()
+            .forEach((entry) -> this.itemTypeManager.register(itemType -> itemType
+                .setIdentifier(entry.getKey().getValue().toString())
+                .setEnchantability(entry.getValue().getEnchantability())
+            )
+        );
 
     }
 }

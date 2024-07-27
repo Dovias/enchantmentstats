@@ -1,0 +1,11 @@
+{
+  "required": true,
+  "package": "me.dovias.enchantmentstats.fabric.hook.mixins",
+  "compatibilityLevel": "JAVA_21",
+  "client": [
+    "EnchantmentScreenMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "id": "${mod_id}",
+  "id": "enchantmentstats",
   "name": "${mod_name}",
   "description": "${mod_description}",
   "version": "${mod_version}",
@@ -19,8 +19,9 @@
   "icon": "${mod_icon}",
   "environment": "client",
   "entrypoints": {
-    "client": ["${mod_group}.EnchantmentStatsClient"]
+    "client": ["me.dovias.enchantmentstats.fabric.EnchantmentStatsClient"]
   },
+  "mixins": ["enchantmentstats.mixins.json"],
   "depends": {
     "fabricloader": ">=0.15.11",
     "fabric-api": ">=0.100.7",

@@ -1,33 +1,29 @@
 package me.dovias.enchantmentstats.fabric;
 
-import me.dovias.enchantmentstats.EnchantmentStatsMod;
-import me.dovias.enchantmentstats.VersionHook;
-import me.dovias.enchantmentstats.VersionHookFactory;
+import me.dovias.enchantmentstats.*;
 import net.fabricmc.api.ClientModInitializer;
 
 import java.util.Optional;
 import java.util.ServiceLoader;
 
 public class EnchantmentStatsClient implements ClientModInitializer {
-    private final EnchantmentStatsMod mod = new EnchantmentStatsMod();
-
-    private VersionHook adapter;
+    private VersionHook hook;
+    private EnchantmentStats mod;
 
     @Override
     public void onInitializeClient() {
-        Optional<VersionHookFactory> loader = ServiceLoader.load(VersionHookFactory.class).findFirst();
-        if (loader.isEmpty()) {
-            System.out.println("no version adapter found!");
+        Optional<EnchantmentStatsFactory> modFactoryOptional = ServiceLoader.load(EnchantmentStatsFactory.class).findFirst();
+        if (modFactoryOptional.isEmpty()) {
+            System.out.println("No EnchantmentStats intermediary classes found!");
             return;
         }
+        this.mod = modFactoryOptional.get().create();
 
-        VersionHookFactory factory = loader.get();
-        this.adapter = factory.getVersionAdapter(this.mod);
-
-        System.out.println("Loaded adapter version: " + this.adapter.getVersion());
-    }
-
-    public EnchantmentStatsMod getMod() {
-        return this.mod;
+        Optional<VersionHookFactory> hookFactoryOptional = ServiceLoader.load(VersionHookFactory.class).findFirst();
+        if (hookFactoryOptional.isEmpty()) {
+            System.out.println("No version adapter found!");
+            return;
+        }
+        this.hook = hookFactoryOptional.get().create(this.mod);
     }
 }
